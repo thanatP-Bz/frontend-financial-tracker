@@ -15,7 +15,7 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      setAuth(data.accessToken, data.user);
+      setAuth(data.accessToken, data.refreshToken, data.user);
       toast.success("Login successful!");
       navigate("/dashboard");
     },

@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const registerMutation = useMutation({
     mutationFn: register,
     onSuccess: (data) => {
-      setAuth(data.accessToken, data.user);
+      setAuth(data.accessToken, data.refreshToken, data.user);
       toast.success("Registration successful!");
       navigate("/dashboard");
     },

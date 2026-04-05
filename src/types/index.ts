@@ -9,30 +9,43 @@ export interface RegisterCredentials {
   password: string;
 }
 
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
-
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
 }
 
+export type TransactionType = 'income' | 'expense';
+export type TransactionCategory =
+  | 'Food'
+  | 'Transport'
+  | 'Housing'
+  | 'Entertainment'
+  | 'Salary'
+  | 'Other';
+
 export interface Transaction {
-  id: number;
-  description: string;
+  _id: string;
+  userId: string;
+  type: TransactionType;
   amount: number;
-  type: 'income' | 'expense';
-  category: string;
+  category: TransactionCategory;
+  description: string;
   date: string;
+  createdAt: string;
 }
 
 export interface TransactionPayload {
-  description: string;
+  type: TransactionType;
   amount: number;
-  type: 'income' | 'expense';
-  category: string;
+  category: TransactionCategory;
+  description: string;
   date: string;
+}
+
+export interface TransactionFilters {
+  type?: TransactionType;
+  category?: TransactionCategory;
+  startDate?: string;
+  endDate?: string;
 }

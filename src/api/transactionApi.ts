@@ -1,17 +1,26 @@
-import api from './axios';
-import type { Transaction, TransactionPayload } from '../types';
+import api from "./axios";
+import type {
+  Transaction,
+  TransactionFilters,
+  TransactionPayload,
+} from "../types";
 
-export const getTransactions = () =>
-  api.get<Transaction[]>('/transactions').then((res) => res.data);
+export const getTransactions = (filters?: TransactionFilters) =>
+  api
+    .get("/transactions", { params: filters })
+    .then((res) => res.data.transactions as Transaction[]);
 
-export const getTransaction = (id: number) =>
-  api.get<Transaction>(`/transactions/${id}`).then((res) => res.data);
+export const getTransaction = (id: string) =>
+  api.get(`/transactions/${id}`).then((res) => res.data.transaction as Transaction);
 
 export const createTransaction = (data: TransactionPayload) =>
-  api.post<Transaction>('/transactions', data).then((res) => res.data);
+  api.post("/transactions", data).then((res) => res.data.transaction as Transaction);
 
-export const updateTransaction = (id: number, data: TransactionPayload) =>
-  api.put<Transaction>(`/transactions/${id}`, data).then((res) => res.data);
+export const updateTransaction = (
+  id: string,
+  data: Partial<TransactionPayload>,
+) =>
+  api.patch(`/transactions/${id}`, data).then((res) => res.data.transaction as Transaction);
 
-export const deleteTransaction = (id: number) =>
-  api.delete(`/transactions/${id}`);
+export const deleteTransaction = (id: string) =>
+  api.delete(`/transactions/${id}`).then((res) => res.data);
