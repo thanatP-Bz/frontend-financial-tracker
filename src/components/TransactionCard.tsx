@@ -21,25 +21,22 @@ export default function TransactionCard({ transaction }: Props) {
   });
 
   return (
-    <div className="flex items-center justify-between p-4 border rounded-md">
+    <div>
       <div>
-        <p className="font-medium">{transaction.description}</p>
-        <p className="text-sm text-gray-500">
+        <p>{transaction.description}</p>
+        <p>
           {transaction.category} · {new Date(transaction.date).toLocaleDateString()}
         </p>
       </div>
-      <div className="flex items-center gap-4">
-        <span className={transaction.type === 'income' ? 'text-green-600 font-semibold' : 'text-red-500 font-semibold'}>
+      <div>
+        <span>
           {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toFixed(2)}
         </span>
-        <Link to={`/edit-transaction/${transaction._id}`} className="text-sm text-blue-600 hover:underline">
-          Edit
-        </Link>
+        <Link to={`/edit-transaction/${transaction._id}`}>Edit</Link>
         <button
           type="button"
           onClick={() => deleteMutation.mutate()}
           disabled={deleteMutation.isPending}
-          className="text-sm text-red-500 hover:underline disabled:opacity-50"
         >
           Delete
         </button>

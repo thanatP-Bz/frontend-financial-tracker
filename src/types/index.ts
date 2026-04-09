@@ -39,7 +39,7 @@ export interface TransactionPayload {
   type: TransactionType;
   amount: number;
   category: TransactionCategory;
-  description: string;
+  description?: string;
   date: string;
 }
 

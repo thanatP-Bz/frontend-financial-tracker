@@ -18,20 +18,14 @@ export default function Navbar() {
   });
 
   return (
-    <nav className="bg-white border-b px-6 py-3 flex items-center justify-between">
-      <Link to="/dashboard" className="font-bold text-lg">
-        FinanceTracker
-      </Link>
-      <div className="flex items-center gap-4">
-        <Link to="/add-transaction" className="text-sm text-blue-600 hover:underline">
-          + Add Transaction
-        </Link>
-        <span className="text-sm text-gray-500">{user?.name}</span>
+    <nav>
+      <Link to="/dashboard">FinanceTracker</Link>
+      <div>
+        <span>{user?.name}</span>
         <button
           type="button"
           onClick={() => logoutMutation.mutate()}
           disabled={logoutMutation.isPending}
-          className="text-sm text-red-500 hover:underline disabled:opacity-50"
         >
           Logout
         </button>
