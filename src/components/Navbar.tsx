@@ -1,8 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { logout } from '../api/authApi';
-import { useAuthStore } from '../store/useAuthStore';
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { logout } from "../api/authApi";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -12,20 +12,19 @@ export default function Navbar() {
     mutationFn: logout,
     onSettled: () => {
       clearAuth();
-      navigate('/login');
-      toast.success('Logged out');
+      navigate("/login");
+      toast.success("Logged out");
     },
   });
 
   return (
-    <nav>
-      <Link to="/dashboard">FinanceTracker</Link>
-      <div>
-        <span>{user?.name}</span>
+    <nav className="flex items-center justify-between px-6 py-4 bg-white border-b">
+      <span className="text-lg font-bold">FinanceTracker</span>
+      <div className="flex items-center gap-4">
+        <span className="text-gray-600">{user?.name}</span>
         <button
-          type="button"
           onClick={() => logoutMutation.mutate()}
-          disabled={logoutMutation.isPending}
+          className="px-3 py-1 text-sm text-red-600 hover:text-red-800 cursor-pointer"
         >
           Logout
         </button>

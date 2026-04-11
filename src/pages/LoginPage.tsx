@@ -25,7 +25,7 @@ export default function LoginPage() {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      const message = error.message?.data?.message || "Register failed";
+      const message = error.message?.data?.message || "Login failed";
       toast.error(message);
     },
   });
@@ -67,7 +67,9 @@ export default function LoginPage() {
             onChange={handleChange}
           />
         </div>
-        <button>submit</button>
+        <button className="cursor-pointer">
+          {loginMutaion.isPending ? "logging in..." : "Login"}
+        </button>
       </form>
     </div>
   );

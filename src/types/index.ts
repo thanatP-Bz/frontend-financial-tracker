@@ -15,14 +15,14 @@ export interface User {
   email: string;
 }
 
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = "income" | "expense";
 export type TransactionCategory =
-  | 'Food'
-  | 'Transport'
-  | 'Housing'
-  | 'Entertainment'
-  | 'Salary'
-  | 'Other';
+  | "Food"
+  | "Transport"
+  | "Housing"
+  | "Entertainment"
+  | "Salary"
+  | "Other";
 
 export interface Transaction {
   _id: string;
