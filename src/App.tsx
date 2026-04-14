@@ -4,7 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
-import AddTransactionPage from "./pages/AddTransactionPage";
+import AddTransactionPage from "./pages/AddTransactionForm";
 import EditTransactionPage from "./pages/EditTransactionPage";
 
 function App() {
