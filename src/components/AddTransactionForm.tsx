@@ -12,7 +12,11 @@ interface TransactionForm {
   date: string;
 }
 
-const AddTransactionPage = () => {
+interface AddTransactionFormProps {
+  onSuccess?: () => void;
+}
+
+const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<TransactionForm>({
@@ -29,6 +33,7 @@ const AddTransactionPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`transactions`] });
       toast.success("Transaction Added!");
+      onSuccess?.();
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
@@ -78,9 +83,15 @@ const AddTransactionPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex flex-col w-fit">
-        <div className="flex rounded-2xl bg-neutral-500 mx-3 p-1 w-fit mt-2">
+    <form onSubmit={handleSubmit} className="max-w-sm mx-auto p-4">
+      <h1 className="text-xl font-bold mb-4">Add Transaction</h1>
+
+      {/* Type Toggle */}
+      <div className="mb-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Type
+        </label>
+        <div className="flex rounded-xl bg-neutral-500 p-1 w-fit">
           <button
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${
@@ -106,54 +117,74 @@ const AddTransactionPage = () => {
             Expense
           </button>
         </div>
+      </div>
 
-        {/* Amount */}
-        <div>
+      {/* Amount */}
+      <div className="mb-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Amount
+        </label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+            $
+          </span>
           <input
             type="number"
             name="amount"
-            placeholder="amount"
+            placeholder="0.00"
             value={formData.amount}
             onChange={handleChange}
+            className="w-full pl-7 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004D3A] focus:border-transparent outline-none"
           />
         </div>
+      </div>
 
-        {/* Description */}
-        <div>
-          <input
-            type="text"
-            name="description"
-            placeholder="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
+      {/* Description */}
+      <div className="mb-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Description
+        </label>
+        <input
+          type="text"
+          name="description"
+          placeholder="What's this for?"
+          value={formData.description}
+          onChange={handleChange}
+          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004D3A] focus:border-transparent outline-none"
+        />
+      </div>
 
-        {/* Category */}
+      {/* Category */}
+      <div className="mb-4">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Category
+        </label>
         <select
           name="category"
           value={formData.category}
           onChange={handleChange}
+          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004D3A] focus:border-transparent outline-none bg-white"
         >
           <option value="">Select category</option>
-          <option value="Food">Food</option>
-          <option value="Transport">Transport</option>
-          <option value="Housing">Housing</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Salary">Salary</option>
-          <option value="Other">Other</option>
+          <option value="Food">🍔 Food</option>
+          <option value="Transport">🚗 Transport</option>
+          <option value="Housing">🏠 Housing</option>
+          <option value="Entertainment">🎬 Entertainment</option>
+          <option value="Salary">💰 Salary</option>
+          <option value="Other">📦 Other</option>
         </select>
-
-        <button
-          type="submit"
-          className="px-6 py-3 mx-3 text-sm font-medium rounded-2xl transition-colors cursor-pointer bg-[#004D3A] text-white"
-          disabled={createMutation.isPending}
-        >
-          {createMutation.isPending ? "Adding..." : "+ Add Transaction"}
-        </button>
       </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={createMutation.isPending}
+        className="w-full py-2 px-4 bg-[#004D3A] hover:bg-[#003d2e] disabled:bg-[#004D3A]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+      >
+        {createMutation.isPending ? "Adding..." : "+ Add Transaction"}
+      </button>
     </form>
   );
 };
 
-export default AddTransactionPage;
+export default AddTransactionForm;

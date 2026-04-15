@@ -4,7 +4,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
-import AddTransactionPage from "./pages/AddTransactionForm";
 import EditTransactionPage from "./pages/EditTransactionPage";
 
 function App() {
@@ -27,7 +26,6 @@ function App() {
       {/* Protected Routes - Uses Outlet */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/add-transaction" element={<AddTransactionPage />} />
         <Route path="/edit-transaction/:id" element={<EditTransactionPage />} />
       </Route>
 
