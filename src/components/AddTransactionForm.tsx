@@ -49,7 +49,7 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "amount" ? Number(value) : value,
+      [name]: name === "amount" ? value.replace(/^0+(?=\d)/, "") : value,
     }));
   };
 
