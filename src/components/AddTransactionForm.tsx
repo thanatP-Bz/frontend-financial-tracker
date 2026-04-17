@@ -91,12 +91,12 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
         <label className="block text-xs font-medium text-gray-700 mb-1">
           Type
         </label>
-        <div className="flex rounded-xl bg-neutral-500 p-1 w-fit">
+        <div className="flex rounded-xl bg-neutral-200 p-1 w-fit">
           <button
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${
               formData.type === "income"
-                ? "bg-[#7FA033] text-white"
+                ? "bg-[#92ada4] text-white"
                 : "text-white"
             }`}
             onClick={() => setFormData((prev) => ({ ...prev, type: "income" }))}
@@ -107,7 +107,7 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${
               formData.type === "expense"
-                ? "bg-[#d64a17] text-white"
+                ? "bg-[#edd5c0] text-[#84572f]"
                 : "text-white"
             }`}
             onClick={() =>
@@ -179,7 +179,7 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
       <button
         type="submit"
         disabled={createMutation.isPending}
-        className="w-full py-2 px-4 bg-[#004D3A] hover:bg-[#003d2e] disabled:bg-[#004D3A]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+        className="w-full py-2 px-4 bg-[#0892a5] hover:bg-[##0892a5]/20 disabled:bg-[#0892a5]/50 text-sm text-white font-medium rounded-lg transition-colors cursor-pointer"
       >
         {createMutation.isPending ? "Adding..." : "+ Add Transaction"}
       </button>

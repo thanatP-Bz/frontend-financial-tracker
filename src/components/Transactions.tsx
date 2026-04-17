@@ -50,76 +50,88 @@ const Transactions = () => {
   }, [error]);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg p-4 shadow">
+    <div className="max-w-md mx-auto bg-white rounded-lg">
       {isLoading && <p>Loading...</p>}
-      <ul className="space-y-1">
-        {transaction?.map((transaction) => (
-          <li key={transaction._id}>
-            <div className="flex items-center justify-between bg-white rounded-lg p-4 ">
-              {/* Left side - icon and details */}
-              <div className="flex items-center gap-4">
-                {/* Category icon */}
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                    transaction.type === "income"
-                      ? "bg-[#7FA033]/20 text-[#7FA033]"
-                      : "bg-[#d64a17]/20 text-[#d64a17]"
-                  }`}
-                >
-                  {transaction.category === "Food" && "🍔"}
-                  {transaction.category === "Transport" && "🚗"}
-                  {transaction.category === "Housing" && "🏠"}
-                  {transaction.category === "Entertainment" && "🎬"}
-                  {transaction.category === "Salary" && "💰"}
-                  {transaction.category === "Other" && "📦"}
+
+      {!isLoading && (!transaction || transaction.length === 0) ? (
+        <div className="bg-white rounded-lg p-8 shadow text-center">
+          <p className="text-gray-500">No transactions yet</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Add your first transaction to get started
+          </p>
+        </div>
+      ) : (
+        <ul className="space-y-3">
+          {transaction?.map((transaction) => (
+            <li key={transaction._id}>
+              <div
+                className={`flex items-center justify-between rounded-lg p-4 ${
+                  transaction.type === "income"
+                    ? "bg-[#92ada4]/50"
+                    : "bg-[#edd5c0]"
+                }`}
+              >
+                {/* Left side - icon and details */}
+                <div className="flex items-center gap-4">
+                  {/* Category icon */}
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-lg bg-white`}
+                  >
+                    {transaction.category === "Food" && "🍔"}
+                    {transaction.category === "Transport" && "🚗"}
+                    {transaction.category === "Housing" && "🏠"}
+                    {transaction.category === "Entertainment" && "🎬"}
+                    {transaction.category === "Salary" && "💰"}
+                    {transaction.category === "Other" && "📦"}
+                  </div>
+
+                  {/* Details */}
+                  <div>
+                    <p className="font-medium text-gray-800">
+                      {transaction.description || transaction.category}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {transaction.category}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Details */}
-                <div>
-                  <p className="font-medium text-gray-800">
-                    {transaction.description || transaction.category}
+                {/* Right side - amount and actions */}
+                <div className="flex items-center gap-4">
+                  <p
+                    className={`font-bold text-lg ${
+                      transaction.type === "income"
+                        ? "text-[#84572f]"
+                        : "text-white"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : "-"}$
+                    {transaction.amount.toFixed(2)}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    {transaction.category}
-                  </p>
+
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    <button
+                      aria-label="Edit transaction"
+                      className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                      onClick={() => setEditingTransaction(transaction)}
+                    >
+                      <EditIcon />
+                    </button>
+                    <button
+                      aria-label="Edit transaction"
+                      className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                      onClick={() => handleDelete(transaction._id)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/* Right side - amount and actions */}
-              <div className="flex items-center gap-4">
-                <p
-                  className={`font-bold text-lg ${
-                    transaction.type === "income"
-                      ? "text-[#7FA033]"
-                      : "text-[#d64a17]"
-                  }`}
-                >
-                  {transaction.type === "income" ? "+" : "-"}$
-                  {transaction.amount.toFixed(2)}
-                </p>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <button
-                    aria-label="Edit transaction"
-                    className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors"
-                    onClick={() => setEditingTransaction(transaction)}
-                  >
-                    <EditIcon />
-                  </button>
-                  <button
-                    aria-label="Edit transaction"
-                    className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors"
-                    onClick={() => handleDelete(transaction._id)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* edit form */}
       {editingTransaction && (

@@ -73,7 +73,7 @@ const EditTransactionForm = ({
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${
               formData.type === "income"
-                ? "bg-[#7FA033] text-white"
+                ? "bg-[#92ada4] text-white"
                 : "text-white"
             }`}
             onClick={() => setFormData((prev) => ({ ...prev, type: "income" }))}
@@ -84,7 +84,7 @@ const EditTransactionForm = ({
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${
               formData.type === "expense"
-                ? "bg-[#d64a17] text-white"
+                ? "bg-[#edd5c0] text-[#84572f]"
                 : "text-white"
             }`}
             onClick={() =>
@@ -155,7 +155,7 @@ const EditTransactionForm = ({
       <button
         type="submit"
         disabled={updateMutation.isPending}
-        className="w-full py-2 px-4 bg-[#C8BD00] hover:bg-[#C8BD00] disabled:bg-[#C8BD00]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+        className="w-full py-2 px-4 bg-[#0892a5] hover:bg-[##0892a5]/20 disabled:bg-[#0892a5]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
       >
         {updateMutation.isPending ? "Updating..." : "Update Transaction"}
       </button>

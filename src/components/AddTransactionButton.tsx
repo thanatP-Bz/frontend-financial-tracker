@@ -10,7 +10,7 @@ const AddTransactionButton = () => {
         <button
           type="submit"
           onClick={() => setIsModalOpen(!isModalOpen)}
-          className=" py-2 px-4 bg-[#004D3A] hover:bg-[#003d2e] disabled:bg-[#004D3A]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+          className=" py-2 px-4 bg-[#0892a5] hover:bg-[##0892a5]/20 disabled:bg-[#0892a5]/50 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
         >
           + Add Transaction
         </button>
