@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import AddTransactionButton from "../components/AddTransactionButton";
 import Navbar from "../components/Navbar";
 import Transactions from "../components/Transactions";
-import SummaryCards from "../components/summaryCards";
+import SummaryCards from "../components/SummaryCards";
+import SpendingChart from "../components/SpendingChart";
 import { getTransactions } from "../api/transactionApi";
 import { useTransactionSummary } from "../hooks/useTransactionSummary";
+import { useCategoryData } from "../hooks/useCategoryData";
 
 const DashboardPage = () => {
   const { data: transactions, isLoading } = useQuery({
@@ -15,13 +17,15 @@ const DashboardPage = () => {
   const { totalIncome, totalExpenses, balance } =
     useTransactionSummary(transactions);
 
+  const categoryData = useCategoryData(transactions);
+
   if (isLoading) return <p>Loading...</p>;
 
   return (
     <div>
       <Navbar />
-      <div className="max-w-4xl mx-auto p-2">
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-4xl mx-auto p-4">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <AddTransactionButton />
         </div>
@@ -32,7 +36,8 @@ const DashboardPage = () => {
           balance={balance}
         />
 
-        <div className="mt-4 max-w-md ml-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <SpendingChart data={categoryData} />
           <Transactions />
         </div>
       </div>

@@ -26,6 +26,8 @@ const Transactions = () => {
     queryFn: () => getTransactions(),
   });
 
+  const displayedTransactions = transaction?.slice(0, 4);
+
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
@@ -50,7 +52,7 @@ const Transactions = () => {
   }, [error]);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg">
+    <div className="max-w-full rounded-lg">
       {isLoading && <p>Loading...</p>}
 
       {!isLoading && (!transaction || transaction.length === 0) ? (
@@ -62,7 +64,7 @@ const Transactions = () => {
         </div>
       ) : (
         <ul className="space-y-3">
-          {transaction?.map((transaction) => (
+          {displayedTransactions?.map((transaction) => (
             <li key={transaction._id}>
               <div
                 className={`flex items-center justify-between rounded-lg p-4 ${
@@ -151,6 +153,11 @@ const Transactions = () => {
             />
           </div>
         </div>
+      )}
+      {transaction && transaction.length > 4 && (
+        <button className="w-full mt-3 py-2 text-sm text-[#004D3A] bg-gray-100 rounded-lg transition-colors cursor-pointer">
+          View All ({transaction.length} transactions)
+        </button>
       )}
     </div>
   );
