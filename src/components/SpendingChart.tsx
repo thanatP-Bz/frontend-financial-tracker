@@ -1,10 +1,4 @@
-import {
-  PieChart,
-  Pie,
-  ResponsiveContainer,
-  Legend,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, ResponsiveContainer, Legend, Tooltip } from "recharts";
 
 interface ChartData {
   name: string;
@@ -15,6 +9,35 @@ interface ChartData {
 interface SpendingChartProps {
   data: ChartData[];
 }
+
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor={x > cx ? "start" : "end"}
+      dominantBaseline="central"
+      className="text-sm font-semibold"
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
 
 const SpendingChart = ({ data }: SpendingChartProps) => {
   if (data.length === 0) {
@@ -38,8 +61,13 @@ const SpendingChart = ({ data }: SpendingChartProps) => {
             outerRadius={100}
             dataKey="value"
             nameKey="name"
+            label={renderCustomizedLabel}
           />
-          <Tooltip formatter={(value) => typeof value === "number" ? `$${value.toFixed(2)}` : value} />
+          <Tooltip
+            formatter={(value) =>
+              typeof value === "number" ? `$${value.toFixed(2)}` : value
+            }
+          />
           <Legend />
         </PieChart>
       </ResponsiveContainer>
