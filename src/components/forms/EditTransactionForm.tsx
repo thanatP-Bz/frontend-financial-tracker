@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { updateTransaction } from "../api/transactionApi";
+import { updateTransaction } from "../../api/transactionApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { TransactionPayload } from "../types";
-import type { Transaction } from "../types";
+import type { TransactionPayload } from "../../types/index";
+import type { Transaction } from "../../types/index";
 
 interface EditTransactionFormProp {
   transaction: Transaction;
@@ -68,7 +68,7 @@ const EditTransactionForm = ({
         <label className="block text-xs font-medium text-gray-700 mb-1">
           Type
         </label>
-        <div className="flex rounded-xl bg-neutral-500 p-1 w-fit">
+        <div className="flex rounded-xl bg-neutral-200 p-1 w-fit">
           <button
             type="button"
             className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-colors cursor-pointer ${

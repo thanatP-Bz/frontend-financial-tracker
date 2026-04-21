@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { createTransaction } from "../api/transactionApi";
+import { createTransaction } from "../../api/transactionApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { TransactionCategory } from "../types";
+import type { TransactionCategory } from "../../types/index";
 
 interface TransactionForm {
   type: "income" | "expense";

@@ -16,12 +16,12 @@ export const useCategoryData = (transitions: Transaction[] | undefined) => {
     );
 
     const COLORS: Record<string, string> = {
-      Food: "#E86C4F",
-      Transport: "#F4A24C",
-      Housing: "#DBAE8D",
-      Entertainment: "#027A76",
-      Salary: "#95907F",
-      Other: "#F2E5D3",
+      Food: "#F0EBD8", // Shells (keep - already light)
+      Transport: "#D4A89A", // Sand Castle (lightened from #B87E6D)
+      Housing: "#5DBFC0", // Aquascape (lightened from #0CA4A5)
+      Entertainment: "#8FB5B7", // Deep Dive (lightened from #6B8D8F)
+      Salary: "#7BA8C7", // Ocean Waves (lightened from #4B82A9)
+      Other: "#B3D9ED",
     };
 
     return Object.entries(categoryTotals).map(([name, value]) => ({

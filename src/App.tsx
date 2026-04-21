@@ -4,7 +4,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
-import EditTransactionPage from "./pages/EditTransactionPage";
 
 function App() {
   const token = useAuthStore((state) => state.token);
@@ -26,7 +25,6 @@ function App() {
       {/* Protected Routes - Uses Outlet */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/edit-transaction/:id" element={<EditTransactionPage />} />
       </Route>
 
       {/* Default Route */}

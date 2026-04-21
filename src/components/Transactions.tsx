@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import type { Transaction } from "../types";
-import EditTransactionForm from "./EditTransactionForm";
+import EditTransactionForm from "./forms/EditTransactionForm";
+import { X } from "lucide-react";
 
 const TrashIcon = FaTrashCan as React.FC;
 const EditIcon = FiEdit as React.FC;
@@ -63,18 +64,18 @@ const Transactions = () => {
           </p>
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-2">
           {displayedTransactions?.map((transaction) => (
             <li key={transaction._id}>
               <div
-                className={`flex items-center justify-between rounded-lg p-4 ${
+                className={`flex items-center justify-between rounded-lg p-3 text-base ${
                   transaction.type === "income"
                     ? "bg-[#92ada4]/50"
                     : "bg-[#edd5c0]"
                 }`}
               >
                 {/* Left side - icon and details */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {/* Category icon */}
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-lg bg-white`}
@@ -89,19 +90,19 @@ const Transactions = () => {
 
                   {/* Details */}
                   <div>
-                    <p className="font-medium text-gray-800">
+                    <p className="font-medium text-small text-gray-800">
                       {transaction.description || transaction.category}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs text-gray-500">
                       {transaction.category}
                     </p>
                   </div>
                 </div>
 
                 {/* Right side - amount and actions */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <p
-                    className={`font-bold text-lg ${
+                    className={`font-bold text-base ${
                       transaction.type === "income"
                         ? "text-[#84572f]"
                         : "text-white"
@@ -112,7 +113,7 @@ const Transactions = () => {
                   </p>
 
                   {/* Actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <button
                       aria-label="Edit transaction"
                       className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
@@ -142,9 +143,9 @@ const Transactions = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setEditingTransaction(null)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 cursor-pointer"
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
             <EditTransactionForm
@@ -155,8 +156,8 @@ const Transactions = () => {
         </div>
       )}
       {transaction && transaction.length > 4 && (
-        <button className="w-full mt-3 py-2 text-sm text-[#004D3A] bg-gray-100 rounded-lg transition-colors cursor-pointer">
-          View All ({transaction.length} transactions)
+        <button className="w-full mt-3 py-2 text-sm text-[#004D3A] bg-gray-300 rounded-lg transition-colors cursor-pointer">
+          View All transactions ({transaction.length})
         </button>
       )}
     </div>

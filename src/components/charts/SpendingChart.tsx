@@ -30,7 +30,7 @@ const renderCustomizedLabel = ({
       x={x}
       y={y}
       fill="white"
-      textAnchor={x > cx ? "start" : "end"}
+      textAnchor="middle"
       dominantBaseline="central"
       className="text-sm font-semibold"
     >
@@ -61,6 +61,7 @@ const SpendingChart = ({ data }: SpendingChartProps) => {
             outerRadius={100}
             dataKey="value"
             nameKey="name"
+            labelLine={false}
             label={renderCustomizedLabel}
           />
           <Tooltip
