@@ -2,14 +2,12 @@ import { deleteTransaction, getTransactions } from "../api/transactionApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { FaTrashCan } from "react-icons/fa6";
-import { FiEdit } from "react-icons/fi";
+import { Trash2 } from "lucide-react";
+import { SquarePen } from "lucide-react";
 import type { Transaction } from "../types";
 import EditTransactionForm from "./forms/EditTransactionForm";
 import { X } from "lucide-react";
-
-const TrashIcon = FaTrashCan as React.FC;
-const EditIcon = FiEdit as React.FC;
+import { Link } from "react-router-dom";
 
 const Transactions = () => {
   const [editingTransaction, setEditingTransaction] =
@@ -27,22 +25,25 @@ const Transactions = () => {
     queryFn: () => getTransactions(),
   });
 
+  //slice
   const displayedTransactions = transaction?.slice(0, 4);
 
+  /* delete function */
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
-      console.log("Delete successful, invalidating...");
       queryClient.invalidateQueries({ queryKey: [`transactions`] });
       toast.success("Transaction deleted");
     },
     onError: () => toast.error("Failed to delete transaction"),
   });
 
+  /* delete handle */
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
 
+  //show toast message
   useEffect(() => {
     if (error) {
       const message =
@@ -119,14 +120,14 @@ const Transactions = () => {
                       className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                       onClick={() => setEditingTransaction(transaction)}
                     >
-                      <EditIcon />
+                      <SquarePen />
                     </button>
                     <button
                       aria-label="Edit transaction"
                       className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                       onClick={() => handleDelete(transaction._id)}
                     >
-                      <TrashIcon />
+                      <Trash2 />
                     </button>
                   </div>
                 </div>
@@ -155,10 +156,14 @@ const Transactions = () => {
           </div>
         </div>
       )}
+
+      {/* limit the list at 4 */}
       {transaction && transaction.length > 4 && (
-        <button className="w-full mt-3 py-2 text-sm text-[#004D3A] bg-gray-300 rounded-lg transition-colors cursor-pointer">
-          View All transactions ({transaction.length})
-        </button>
+        <Link to="/transactions">
+          <div className="w-full mt-3 py-2 text-sm text-[#004D3A] bg-gray-300 rounded-lg transition-colors cursor-pointer text-center">
+            View All transactions ({transaction.length})
+          </div>
+        </Link>
       )}
     </div>
   );

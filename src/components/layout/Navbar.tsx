@@ -4,10 +4,12 @@ import { toast } from "sonner";
 import { logout } from "../../api/authApi";
 import { useAuthStore } from "../../store/useAuthStore";
 import { LogOut } from "lucide-react";
+import { useState } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthStore();
+  const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
 
   const logoutMutation = useMutation({
     mutationFn: logout,
@@ -18,10 +20,14 @@ export default function Navbar() {
     },
   });
 
+  /* filter income */
+
   return (
-    <nav className="flex items-center justify-between px-11 py-5 bg-white">
+    <nav className="flex items-center justify-between px-8 py-5 bg-white">
       {/* Empty left side - or you can add breadcrumbs later */}
-      <div></div>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">Financial Tracker</h1>
+      </div>
 
       {/* Right side - User info + Logout */}
       <div className="flex items-center gap-4">
@@ -43,7 +49,7 @@ export default function Navbar() {
           </div>
           <button
             onClick={() => logoutMutation.mutate()}
-            className="px-3 py-2 text-sm font-medium text-white bg-[#f27979] rounded-lg transition-colors cursor-pointer"
+            className="px-3 py-2 text-sm font-medium text-white bg-[#e6748e] rounded-lg transition-colors cursor-pointer"
           >
             Logout
           </button>

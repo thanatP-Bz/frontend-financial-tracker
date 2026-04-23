@@ -20,7 +20,7 @@ const SummaryCards = ({
       </div>
 
       {/* Expenses Card */}
-      <div className="bg-[#f1a805]/20 rounded-lg p-4 shadow h-28 flex flex-col justify-between">
+      <div className="bg-[#f1a805]/40 rounded-lg p-4 shadow h-28 flex flex-col justify-between">
         <p className="text-xs md:text-sm text-gray-500">Total Expenses</p>
         <p className="text-lg md:text-2xl lg:text-3xl font-bold text-[#84572f]">
           ${totalExpenses.toFixed(2)}

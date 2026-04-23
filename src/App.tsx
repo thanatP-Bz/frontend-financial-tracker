@@ -4,6 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import TransactionsPage from "./pages/TransactionsPage";
+import Layout from "./components/layout/Layout";
 
 function App() {
   const token = useAuthStore((state) => state.token);
@@ -24,7 +26,10 @@ function App() {
 
       {/* Protected Routes - Uses Outlet */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+        </Route>
       </Route>
 
       {/* Default Route */}

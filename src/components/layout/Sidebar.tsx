@@ -12,11 +12,8 @@ const Sidebar = () => {
     { name: "Settings", icon: Settings, path: "/settings" },
   ];
   return (
-    <div className="w-64 h-screen bg-white boder-r flex flex-col">
+    <div className="w-64 h-full bg-white flex flex-col justify-between">
       {/* logo */}
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-800">Financial Tracker</h1>
-      </div>
 
       {/* Navigation Menu */}
       <nav className="flex-1 p-4 mt-1">
@@ -38,11 +35,11 @@ const Sidebar = () => {
           ))}
         </ul>
       </nav>
-
-      {/* Bottom Section (optional - could add user info here) */}
       <div className="p-4 border-t border-gray-200">
         <p className="text-sm text-gray-500">v1.0.0</p>
       </div>
+
+      {/* Bottom Section (optional - could add user info here) */}
     </div>
   );
 };
