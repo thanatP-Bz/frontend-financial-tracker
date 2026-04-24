@@ -7,10 +7,18 @@ import { SquarePen } from "lucide-react";
 import { X } from "lucide-react";
 import type { Transaction } from "../types";
 import EditTransactionForm from "../components/forms/EditTransactionForm";
+import AddTransactionButton from "../components/AddTransactionButton";
 
 const TransactionsPage = () => {
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
+  const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
+
+  const filterOptions = [
+    { label: "All", value: "all", color: "#e6748e" },
+    { label: "Income", value: "income", color: "#92ada4" },
+    { label: "Expenses", value: "expense", color: "#f1a805" },
+  ] as const;
 
   const queryClient = useQueryClient();
 
@@ -22,6 +30,12 @@ const TransactionsPage = () => {
   } = useQuery({
     queryKey: ["transactions"],
     queryFn: () => getTransactions(),
+  });
+
+  /* filter */
+  const filteredTransactions = transaction?.filter((t) => {
+    if (filter === "all") return true;
+    return t.type === filter;
   });
 
   /* delete function */
@@ -53,105 +67,119 @@ const TransactionsPage = () => {
     <div>
       {isLoading && <p>is loading...</p>}
 
-      {!isLoading && (!transaction || transaction.length === 0) ? (
-        <div className="bg-white rounded-lg p-8 shadow text-center">
-          <p className="text-gray-500">No transactions yet</p>
-          <p className="text-sm text-gray-400 mt-1">
-            Add your first transaction to get started
-          </p>
-        </div>
-      ) : (
-        <div className="bg-white p-2 m-4 rounded-lg">
-          {/* filter transactions */}
-          <div className="flex m-2 p-2 gap-x-2 border-b border-gray-200">
-            <div>
-              <button className="px-3 py-2 text-sm font-medium text-white bg-[#92ada4] rounded-lg transition-colors cursor-pointer">
-                Income
-              </button>
-            </div>
-            <div>
-              <button className="px-3 py-2 text-sm font-medium text-white bg-[#e6748e]  rounded-lg transition-colors cursor-pointer">
-                Expenses
-              </button>
-            </div>
-            <div>
-              <button className="px-3 py-2 text-sm font-medium text-white  bg-[#f1a805]/70 rounded-lg transition-colors cursor-pointer">
-                All Transactions
-              </button>
-            </div>
+      {!isLoading && (
+        <div className="max-w-7xl mx-auto p-4 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold">Transactions</h1>
+            <AddTransactionButton />
           </div>
+          <div className="bg-white p-2 rounded-lg">
+            {/* filter transactions */}
+            <div className="flex m-2 p-2 gap-x-2 border-b border-gray-200">
+              {filterOptions.map((option) => (
+                <div key={option.value}>
+                  <button
+                    onClick={() => setFilter(option.value)}
+                    className={`px-3 py-2 text-sm font-medium  rounded-lg cursor-pointer ${
+                      option.value === "all"
+                        ? "bg-[#e6748e] text-white"
+                        : option.value === "income"
+                          ? "bg-[#92ada4] text-white"
+                          : "bg-[#f1a805]/40 text-[#84572f]"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                </div>
+              ))}
+            </div>
 
-          {/* transaction lists */}
-          <ul className="space-y-2 m-4">
-            {transaction?.map((transaction) => (
-              <li key={transaction._id}>
-                <div
-                  className={`flex items-center justify-between rounded-lg p-3 text-base ${
-                    transaction.type === "income"
-                      ? "bg-[#92ada4]/50"
-                      : "bg-[#edd5c0]"
-                  }`}
-                >
-                  {/* Left side - icon and details */}
-                  <div className="flex items-center gap-3">
-                    {/* Category icon */}
+            {filteredTransactions?.length === 0 ? (
+              <div className="bg-white rounded-lg p-8 shadow text-center m-4">
+                <p className="text-gray-500">
+                  {filter === "all" && "No transactions yet"}
+                  {filter === "income" && "No income transactions yet"}
+                  {filter === "expense" && "No expense transactions yet"}
+                </p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Add your first {filter === "all" ? "transaction" : filter} to
+                  get started
+                </p>
+              </div>
+            ) : (
+              /* transaction lists */
+              <ul className="space-y-2 m-4">
+                {filteredTransactions?.map((transaction) => (
+                  <li key={transaction._id}>
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-lg bg-white`}
-                    >
-                      {transaction.category === "Food" && "🍔"}
-                      {transaction.category === "Transport" && "🚗"}
-                      {transaction.category === "Housing" && "🏠"}
-                      {transaction.category === "Entertainment" && "🎬"}
-                      {transaction.category === "Salary" && "💰"}
-                      {transaction.category === "Other" && "📦"}
-                    </div>
-
-                    {/* Details */}
-                    <div>
-                      <p className="font-medium text-small text-gray-800">
-                        {transaction.description || transaction.category}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {transaction.category}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Right side - amount and actions */}
-                  <div className="flex items-center gap-3">
-                    <p
-                      className={`font-bold text-base ${
+                      className={`flex items-center justify-between rounded-lg p-3 text-base ${
                         transaction.type === "income"
-                          ? "text-[#84572f]"
-                          : "text-white"
+                          ? "bg-[#92ada4]/50"
+                          : "bg-[#edd5c0]"
                       }`}
                     >
-                      {transaction.type === "income" ? "+" : "-"}$
-                      {transaction.amount.toFixed(2)}
-                    </p>
+                      {/* Left side - icon and details */}
+                      <div className="flex items-center gap-3">
+                        {/* Category icon */}
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg bg-white`}
+                        >
+                          {transaction.category === "Food" && "🍔"}
+                          {transaction.category === "Transport" && "🚗"}
+                          {transaction.category === "Housing" && "🏠"}
+                          {transaction.category === "Entertainment" && "🎬"}
+                          {transaction.category === "Salary" && "💰"}
+                          {transaction.category === "Other" && "📦"}
+                        </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-1">
-                      <button
-                        aria-label="Edit transaction"
-                        className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        onClick={() => setEditingTransaction(transaction)}
-                      >
-                        <SquarePen />
-                      </button>
-                      <button
-                        aria-label="Edit transaction"
-                        className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                        onClick={() => handleDelete(transaction._id)}
-                      >
-                        <Trash2 />
-                      </button>
+                        {/* Details */}
+                        <div>
+                          <p className="font-medium text-small text-gray-800">
+                            {transaction.description || transaction.category}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {transaction.category}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Right side - amount and actions */}
+                      <div className="flex items-center gap-3">
+                        <p
+                          className={`font-bold text-base ${
+                            transaction.type === "income"
+                              ? "text-[#84572f]"
+                              : "text-white"
+                          }`}
+                        >
+                          {transaction.type === "income" ? "+" : "-"}$
+                          {transaction.amount.toFixed(2)}
+                        </p>
+
+                        {/* Actions */}
+                        <div className="flex gap-1">
+                          <button
+                            aria-label="Edit transaction"
+                            className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            onClick={() => setEditingTransaction(transaction)}
+                          >
+                            <SquarePen />
+                          </button>
+                          <button
+                            aria-label="Delete transaction"
+                            className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            onClick={() => handleDelete(transaction._id)}
+                          >
+                            <Trash2 />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
 

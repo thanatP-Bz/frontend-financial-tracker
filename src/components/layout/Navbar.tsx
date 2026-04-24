@@ -4,12 +4,10 @@ import { toast } from "sonner";
 import { logout } from "../../api/authApi";
 import { useAuthStore } from "../../store/useAuthStore";
 import { LogOut } from "lucide-react";
-import { useState } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, clearAuth } = useAuthStore();
-  const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
 
   const logoutMutation = useMutation({
     mutationFn: logout,
