@@ -15,9 +15,9 @@ const TransactionsPage = () => {
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
 
   const filterOptions = [
-    { label: "All", value: "all", color: "#e6748e" },
-    { label: "Income", value: "income", color: "#92ada4" },
-    { label: "Expenses", value: "expense", color: "#f1a805" },
+    { label: "All", value: "all" },
+    { label: "Income", value: "income" },
+    { label: "Expenses", value: "expense" },
   ] as const;
 
   const queryClient = useQueryClient();
@@ -31,6 +31,8 @@ const TransactionsPage = () => {
     queryKey: ["transactions"],
     queryFn: () => getTransactions(),
   });
+
+  console.log(transaction);
 
   /* filter */
   const filteredTransactions = transaction?.filter((t) => {
@@ -76,22 +78,25 @@ const TransactionsPage = () => {
           <div className="bg-white p-2 rounded-lg">
             {/* filter transactions */}
             <div className="flex m-2 p-2 gap-x-2 border-b border-gray-200">
-              {filterOptions.map((option) => (
-                <div key={option.value}>
-                  <button
-                    onClick={() => setFilter(option.value)}
-                    className={`px-3 py-2 text-sm font-medium  rounded-lg cursor-pointer ${
-                      option.value === "all"
-                        ? "bg-[#e6748e] text-white"
-                        : option.value === "income"
-                          ? "bg-[#92ada4] text-white"
-                          : "bg-[#f1a805]/40 text-[#84572f]"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                </div>
-              ))}
+              {filterOptions.map((option) => {
+                console.log(option);
+                return (
+                  <div key={option.value}>
+                    <button
+                      onClick={() => setFilter(option.value)}
+                      className={`px-3 py-2 text-sm font-medium  rounded-lg cursor-pointer ${
+                        option.value === "all"
+                          ? "bg-[#e6748e] text-white"
+                          : option.value === "income"
+                            ? "bg-[#92ada4] text-white"
+                            : "bg-[#f1a805]/40 text-[#84572f]"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
             {filteredTransactions?.length === 0 ? (
