@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "../store/useAuthStore";
 import { login } from "../api/authApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -112,12 +112,12 @@ export default function LoginPage() {
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               Don't have an account?{" "}
-              <a
-                href="/register"
+              <Link
+                to="/register"
                 className="text-[#0892a5] hover:text-[#0a7a8c] font-medium"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>
