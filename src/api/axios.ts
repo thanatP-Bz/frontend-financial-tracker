@@ -9,7 +9,7 @@ const clearLocalAuth = () => {
 };
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.BACKEND_URL || import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -29,7 +29,10 @@ api.interceptors.request.use(
 
 // Response interceptor - handle token refresh on 401
 let isRefreshing = false;
-let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: unknown) => void }[] = [];
+let failedQueue: {
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
+}[] = [];
 
 const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -49,8 +52,12 @@ api.interceptors.response.use(
 
     // Handle 401 - try to refresh the access token
     // Skip refresh for auth endpoints (e.g. wrong credentials on login returns 401)
-    const isAuthEndpoint = originalRequest.url?.includes('/auth/');
-    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+    const isAuthEndpoint = originalRequest.url?.includes("/auth/");
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint
+    ) {
       const refreshToken = localStorage.getItem("refreshToken");
 
       // No refresh token available - go to login
