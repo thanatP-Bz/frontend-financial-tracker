@@ -12,7 +12,7 @@ const SummaryCards = ({
   return (
     <div className="grid grid-cols-3 gap-4">
       {/* Income Card */}
-      <div className="bg-[#92ada4] rounded-lg p-4 shadow h-28 flex flex-col justify-between">
+      <div className="bg-[#84572f]/70 rounded-lg p-4 shadow h-28 flex flex-col justify-between">
         <p className="text-xs md:text-sm text-white">Total Income</p>
         <p className="text-lg md:text-2xl lg:text-3xl font-bold text-white">
           ${totalIncome.toFixed(2)}
@@ -20,7 +20,7 @@ const SummaryCards = ({
       </div>
 
       {/* Expenses Card */}
-      <div className="bg-[#f1a805]/40 rounded-lg p-4 shadow h-28 flex flex-col justify-between">
+      <div className="bg-[#f1a805]/70 rounded-lg p-4 shadow h-28 flex flex-col justify-between">
         <p className="text-xs md:text-sm text-gray-500">Total Expenses</p>
         <p className="text-lg md:text-2xl lg:text-3xl font-bold text-[#84572f]">
           ${totalExpenses.toFixed(2)}

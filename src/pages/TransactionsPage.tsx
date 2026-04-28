@@ -113,22 +113,20 @@ const TransactionsPage = () => {
               </div>
             ) : (
               /* transaction lists */
-              <ul className="space-y-2 m-4">
+              <ul className="space-y-3 m-4">
                 {filteredTransactions?.map((transaction) => (
                   <li key={transaction._id}>
                     <div
-                      className={`flex items-center justify-between rounded-lg p-3 text-base ${
+                      className={`flex items-center justify-between rounded-lg p-3 ${
                         transaction.type === "income"
                           ? "bg-[#92ada4]/50"
                           : "bg-[#edd5c0]"
                       }`}
                     >
                       {/* Left side - icon and details */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         {/* Category icon */}
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg bg-white`}
-                        >
+                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-base md:text-lg bg-white shrink-0">
                           {transaction.category === "Food" && "🍔"}
                           {transaction.category === "Transport" && "🚗"}
                           {transaction.category === "Housing" && "🏠"}
@@ -138,8 +136,8 @@ const TransactionsPage = () => {
                         </div>
 
                         {/* Details */}
-                        <div>
-                          <p className="font-medium text-small text-gray-800">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm md:text-base text-gray-800 truncate">
                             {transaction.description || transaction.category}
                           </p>
                           <p className="text-xs text-gray-500">
@@ -149,9 +147,9 @@ const TransactionsPage = () => {
                       </div>
 
                       {/* Right side - amount and actions */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3 shrink-0">
                         <p
-                          className={`font-bold text-base ${
+                          className={`font-bold text-sm md:text-base ${
                             transaction.type === "income"
                               ? "text-[#84572f]"
                               : "text-white"
@@ -162,20 +160,20 @@ const TransactionsPage = () => {
                         </p>
 
                         {/* Actions */}
-                        <div className="flex gap-1">
+                        <div className="flex gap-0.5 md:gap-1">
                           <button
                             aria-label="Edit transaction"
-                            className="p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 md:p-2 text-gray-400 hover:text-[#004D3A] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                             onClick={() => setEditingTransaction(transaction)}
                           >
-                            <SquarePen />
+                            <SquarePen size={18} className="md:w-6 md:h-6" />
                           </button>
                           <button
                             aria-label="Delete transaction"
-                            className="p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 md:p-2 text-gray-400 hover:text-[#d64a17] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                             onClick={() => handleDelete(transaction._id)}
                           >
-                            <Trash2 />
+                            <Trash2 size={18} className="md:w-6 md:h-6" />
                           </button>
                         </div>
                       </div>
