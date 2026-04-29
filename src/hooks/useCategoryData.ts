@@ -16,7 +16,7 @@ export const useCategoryData = (transitions: Transaction[] | undefined) => {
     );
 
     const COLORS: Record<string, string> = {
-      Food: "#F0EBD8", // Shells (keep - already light)
+      Food: "#E8D5B0", // Shells (keep - already light)
       Transport: "#D4A89A", // Sand Castle (lightened from #B87E6D)
       Housing: "#5DBFC0", // Aquascape (lightened from #0CA4A5)
       Entertainment: "#8FB5B7", // Deep Dive (lightened from #6B8D8F)
