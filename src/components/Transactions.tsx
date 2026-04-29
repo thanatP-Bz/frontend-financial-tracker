@@ -90,12 +90,18 @@ const Transactions = () => {
                   </div>
 
                   {/* Details */}
-                  <div>
-                    <p className="font-medium text-small text-gray-800">
-                      {transaction.description || transaction.category}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm text-gray-800 truncate">
+                      {transaction.description &&
+                      transaction.description !== transaction.category
+                        ? transaction.description
+                        : transaction.category}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {transaction.category}
+                      {new Date(transaction.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </p>
                   </div>
                 </div>
