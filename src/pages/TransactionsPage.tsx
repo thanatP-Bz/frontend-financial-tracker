@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { deleteTransaction, getTransactions } from "../api/transactionApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { SquarePen } from "lucide-react";
 import { X } from "lucide-react";
 import type { Transaction } from "../types";
@@ -12,12 +12,25 @@ import AddTransactionButton from "../components/AddTransactionButton";
 const TransactionsPage = () => {
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
+  const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
+  /* filter options */
   const filterOptions = [
     { label: "All", value: "all" },
     { label: "Income", value: "income" },
     { label: "Expenses", value: "expense" },
+  ] as const;
+
+  /* category options */
+  const categoryOptions = [
+    { label: "Food", value: "Food", icon: "🍔" },
+    { label: "Transport", value: "Transport", icon: "🚗" },
+    { label: "Housing", value: "Housing", icon: "🏠" },
+    { label: "Entertainment", value: "Entertainment", icon: "🎬" },
+    { label: "Salary", value: "Salary", icon: "💰" },
+    { label: "Other", value: "Other", icon: "📦" },
   ] as const;
 
   const queryClient = useQueryClient();
@@ -32,12 +45,15 @@ const TransactionsPage = () => {
     queryFn: () => getTransactions(),
   });
 
-  console.log(transaction);
-
   /* filter */
   const filteredTransactions = transaction?.filter((t) => {
-    if (filter === "all") return true;
-    return t.type === filter;
+    const matchesType = filter === "all" || t.type === filter;
+    const matchesSearch = t.description
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const matchesCategory =
+      categoryFilter === "all" || t.category === categoryFilter;
+    return matchesType && matchesSearch && matchesCategory;
   });
 
   /* delete function */
@@ -76,14 +92,33 @@ const TransactionsPage = () => {
             <AddTransactionButton />
           </div>
           <div className="bg-white p-2 rounded-lg">
-            {/* filter transactions */}
+            {/* Search Bar */}
+            <div className="relative mx-2 mt-2 mb-1">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search size={16} className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search transactions..."
+                className="w-full pl-9 pr-4 py-2 text-sm bg-[#fdf6f0] border border-[#edd5c0] rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e6748e]/40 focus:border-[#e6748e] transition-all"
+              />
+            </div>
+
+            {/* transactions filter */}
             <div className="flex m-2 p-2 gap-x-2 border-b border-gray-200">
               {filterOptions.map((option) => {
                 console.log(option);
                 return (
                   <div key={option.value}>
                     <button
-                      onClick={() => setFilter(option.value)}
+                      onClick={() => {
+                        setFilter(option.value);
+                        if (option.value === "all") {
+                          setCategoryFilter("all");
+                        }
+                      }}
                       className={`px-3 py-2 text-sm font-medium  rounded-lg cursor-pointer ${
                         option.value === "all"
                           ? "bg-[#e6748e] text-white"
@@ -99,17 +134,58 @@ const TransactionsPage = () => {
               })}
             </div>
 
+            {/* Category filter - Mobile: Dropdown, Desktop: Buttons */}
+            <div className="m-2 p-2 border-b border-gray-200">
+              {/* Mobile dropdown */}
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="md:hidden w-full px-3 py-2 text-sm bg-[#fdf6f0] border border-[#edd5c0] rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e6748e]/40 focus:border-[#e6748e]"
+              >
+                <option value="all">All Categories</option>
+                {categoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.icon} {option.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* Desktop buttons */}
+              <div className="hidden md:flex gap-x-2">
+                {categoryOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setCategoryFilter(option.value)}
+                    className={`px-3 py-2 text-sm font-medium rounded-lg cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                      categoryFilter === option.value
+                        ? "bg-[#e6748e] text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {option.icon && <span>{option.icon}</span>}
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {filteredTransactions?.length === 0 ? (
               <div className="bg-white rounded-lg p-8 shadow text-center m-4">
                 <p className="text-gray-500">
-                  {filter === "all" && "No transactions yet"}
-                  {filter === "income" && "No income transactions yet"}
-                  {filter === "expense" && "No expense transactions yet"}
+                  {query
+                    ? `No results for "${query}"`
+                    : filter === "all"
+                      ? "No transactions yet"
+                      : filter === "income"
+                        ? "No income transactions yet"
+                        : "No expense transactions yet"}
                 </p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Add your first {filter === "all" ? "transaction" : filter} to
-                  get started
-                </p>
+                {!query && (
+                  <p className="text-sm text-gray-400 mt-1">
+                    Add your first {filter === "all" ? "transaction" : filter}{" "}
+                    to get started
+                  </p>
+                )}
               </div>
             ) : (
               /* transaction lists */
@@ -135,7 +211,6 @@ const TransactionsPage = () => {
                           {transaction.category === "Other" && "📦"}
                         </div>
 
-                        {/* Details */}
                         {/* Details */}
                         <div className="min-w-0 flex-1">
                           <p className="font-medium text-sm text-gray-800 truncate">

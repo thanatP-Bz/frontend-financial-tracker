@@ -9,7 +9,7 @@ const clearLocalAuth = () => {
 };
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_LOCAL_HOST,
   headers: {
     "Content-Type": "application/json",
   },
