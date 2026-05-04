@@ -8,6 +8,42 @@ import { X } from "lucide-react";
 import type { Transaction } from "../types";
 import EditTransactionForm from "../components/forms/EditTransactionForm";
 import AddTransactionButton from "../components/AddTransactionButton";
+import { ChevronDown } from "lucide-react";
+
+/* helper function for Date */
+const getPresentDates = (preset: string) => {
+  const now = new Date();
+  const presets: Record<string, { firstDay: string; lastDay: string }> = {
+    thisMonth: {
+      firstDay: new Date(now.getFullYear(), now.getMonth(), 1)
+        .toISOString()
+        .split("T")[0],
+      lastDay: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        .toISOString()
+        .split("T")[0],
+    },
+
+    lastMonth: {
+      firstDay: new Date(now.getFullYear(), now.getMonth() - 1, 1)
+        .toISOString()
+        .split("T")[0],
+      lastDay: new Date(now.getFullYear(), now.getMonth(), 0)
+        .toISOString()
+        .split("T")[0],
+    },
+
+    lastThreeMonths: {
+      firstDay: new Date(now.getFullYear(), now.getMonth() - 2, 1)
+        .toISOString()
+        .split("T")[0],
+      lastDay: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        .toISOString()
+        .split("T")[0],
+    },
+  };
+
+  return presets[preset];
+};
 
 const TransactionsPage = () => {
   const [editingTransaction, setEditingTransaction] =
@@ -15,6 +51,14 @@ const TransactionsPage = () => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  const [dateFilters, setDateFilters] = useState(() => {
+    const dates = getPresentDates("thisMonth");
+    return {
+      startDate: dates.firstDay,
+      endDate: dates.lastDay,
+    };
+  });
 
   /* filter options */
   const filterOptions = [
@@ -35,14 +79,16 @@ const TransactionsPage = () => {
 
   const queryClient = useQueryClient();
 
+  console.log(dateFilters);
+
   //fetch data
   const {
     data: transaction,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => getTransactions(),
+    queryKey: ["transactions", dateFilters],
+    queryFn: () => getTransactions(dateFilters),
   });
 
   /* filter */
@@ -92,6 +138,65 @@ const TransactionsPage = () => {
             <AddTransactionButton />
           </div>
           <div className="bg-white p-2 rounded-lg">
+            {/* transactions filter */}
+            <div className="flex flex-wrap items-center m-2 p-2 gap-2 border-b border-gray-200">
+              {filterOptions.map((option) => {
+                const isActive = filter === option.value;
+
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setFilter(option.value);
+                      if (
+                        option.value === "all" ||
+                        option.value === "income" ||
+                        option.value === "expense"
+                      ) {
+                        setCategoryFilter("all");
+                      }
+                    }}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 ${
+                      option.value === "all"
+                        ? isActive
+                          ? "bg-[#e6748e] text-white shadow-md"
+                          : "bg-[#e6748e]/20 text-[#e6748e] hover:bg-[#e6748e]/30"
+                        : option.value === "income"
+                          ? isActive
+                            ? "bg-[#92ada4] text-white shadow-md"
+                            : "bg-[#92ada4]/20 text-[#92ada4] hover:bg-[#92ada4]/30"
+                          : isActive
+                            ? "bg-[#f1a805] text-white shadow-md"
+                            : "bg-[#f1a805]/20 text-[#84572f] hover:bg-[#f1a805]/30"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+
+              {/* date select */}
+              {/* date select with icon wrapper */}
+              <div className="relative md:ml-auto">
+                <select
+                  onChange={(e) => {
+                    const dates = getPresentDates(e.target.value);
+                    setDateFilters({
+                      startDate: dates.firstDay,
+                      endDate: dates.lastDay,
+                    });
+                  }}
+                  defaultValue="thisMonth"
+                  className="w-full px-4 py-2 pr-10 text-sm font-medium bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#e6748e]/50 focus:border-[#e6748e] hover:border-gray-400 transition-colors appearance-none"
+                >
+                  <option value="thisMonth">This Month</option>
+                  <option value="lastMonth">Last Month</option>
+                  <option value="lastThreeMonths">Last 3 Months</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
+
             {/* Search Bar */}
             <div className="relative mx-2 mt-2 mb-1">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -104,34 +209,6 @@ const TransactionsPage = () => {
                 placeholder="Search transactions..."
                 className="w-full pl-9 pr-4 py-2 text-sm bg-[#fdf6f0] border border-[#edd5c0] rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#e6748e]/40 focus:border-[#e6748e] transition-all"
               />
-            </div>
-
-            {/* transactions filter */}
-            <div className="flex m-2 p-2 gap-x-2 border-b border-gray-200">
-              {filterOptions.map((option) => {
-                console.log(option);
-                return (
-                  <div key={option.value}>
-                    <button
-                      onClick={() => {
-                        setFilter(option.value);
-                        if (option.value === "all") {
-                          setCategoryFilter("all");
-                        }
-                      }}
-                      className={`px-3 py-2 text-sm font-medium  rounded-lg cursor-pointer ${
-                        option.value === "all"
-                          ? "bg-[#e6748e] text-white"
-                          : option.value === "income"
-                            ? "bg-[#92ada4] text-white"
-                            : "bg-[#f1a805]/40 text-[#84572f]"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  </div>
-                );
-              })}
             </div>
 
             {/* Category filter - Mobile: Dropdown, Desktop: Buttons */}
@@ -169,18 +246,21 @@ const TransactionsPage = () => {
               </div>
             </div>
 
+            {/* messages */}
             {filteredTransactions?.length === 0 ? (
               <div className="bg-white rounded-lg p-8 shadow text-center m-4">
                 <p className="text-gray-500">
                   {query
                     ? `No results for "${query}"`
-                    : filter === "all"
-                      ? "No transactions yet"
-                      : filter === "income"
-                        ? "No income transactions yet"
-                        : "No expense transactions yet"}
+                    : categoryFilter !== "all"
+                      ? `No ${categoryFilter} transactions yet`
+                      : filter === "all"
+                        ? "No transactions yet"
+                        : filter === "income"
+                          ? "No income transactions yet"
+                          : "No expense transactions yet"}
                 </p>
-                {!query && (
+                {!query && categoryFilter === "all" && (
                   <p className="text-sm text-gray-400 mt-1">
                     Add your first {filter === "all" ? "transaction" : filter}{" "}
                     to get started

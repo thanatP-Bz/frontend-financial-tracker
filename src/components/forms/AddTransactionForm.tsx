@@ -68,7 +68,7 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
       amount: Number(formData.amount),
       category: formData.category as TransactionCategory,
       description: formData.description,
-      date: new Date().toISOString(),
+      date: new Date(formData.date).toISOString(),
     };
 
     createMutation.mutate(submitData);
@@ -173,6 +173,21 @@ const AddTransactionForm = ({ onSuccess }: AddTransactionFormProps) => {
           <option value="Salary">💰 Salary</option>
           <option value="Other">📦 Other</option>
         </select>
+      </div>
+
+      {/* Date */}
+      <div className="mb-3">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Date
+        </label>
+        <input
+          type="date"
+          name="date"
+          placeholder="What's this for?"
+          value={formData.date}
+          onChange={handleChange}
+          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004D3A] focus:border-transparent outline-none"
+        />
       </div>
 
       {/* Submit Button */}
