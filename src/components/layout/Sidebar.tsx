@@ -1,4 +1,4 @@
-import { Home, Receipt, BarChart3, Settings, X } from "lucide-react";
+import { Home, Receipt, BarChart3, Settings, X, Wallet } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
@@ -13,6 +13,7 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
   const menuItems = [
     { name: "Dashboard", icon: Home, path: "/dashboard" },
     { name: "Transactions", icon: Receipt, path: "/transactions" },
+    { name: "Budgets", icon: Wallet, path: "/budgets" },
     { name: "Analytics", icon: BarChart3, path: "/analytics" },
     { name: "Settings", icon: Settings, path: "/settings" },
   ];

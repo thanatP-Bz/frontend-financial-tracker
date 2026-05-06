@@ -49,3 +49,25 @@ export interface TransactionFilters {
   startDate?: string;
   endDate?: string;
 }
+
+export interface BudgetCategory {
+  _id?: string;
+  category: TransactionCategory;
+  limit: number;
+}
+
+export interface Budget {
+  _id: string;
+  userId: string;
+  month: number;
+  year: number;
+  totalLimit?: number;
+  categories: BudgetCategory[];
+}
+
+export interface BudgetPayload {
+  month: number;
+  year: number;
+  totalLimit?: number;
+  categories: BudgetCategory[];
+}

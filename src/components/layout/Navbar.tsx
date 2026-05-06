@@ -25,7 +25,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   /* filter income */
 
   return (
-    <nav className="flex items-center justify-between px-4  md:px-8 py-5 bg-white">
+    <nav className="flex items-center justify-between px-4 border-b border-gray-200  md:px-8 py-5 bg-white">
       {/* Empty left side - or you can add breadcrumbs later */}
       <button
         onClick={onMenuClick}

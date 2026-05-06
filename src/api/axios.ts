@@ -9,8 +9,8 @@ const clearLocalAuth = () => {
 };
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_LOCAL_HOST,
-  /*   baseURL: "http://localhost:5000/api", */
+  /* baseURL: import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_LOCAL_HOST, */
+  baseURL: "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -83,8 +83,8 @@ api.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,
-          /*    `${import.meta.env.VITE_LOCAL_HOST}/auth/refresh`, */
+          /* `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, */
+          `${import.meta.env.VITE_LOCAL_HOST}/auth/refresh`,
           { refreshToken },
           { headers: { "Content-Type": "application/json" } },
         );
