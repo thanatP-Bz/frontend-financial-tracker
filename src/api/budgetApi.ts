@@ -4,7 +4,11 @@ import type { Budget, BudgetPayload } from "../types";
 export const getBudget = (month: number, year: number) =>
   api
     .get("/budget", { params: { month, year } })
-    .then((res) => res.data.budget as Budget);
+    .then((res) => res.data.budget as Budget)
+    .catch((err) => {
+      if (err.response?.status === 404) return null;
+      throw err;
+    });
 
 export const createBudget = (data: BudgetPayload) =>
   api.post("/budget", data).then((res) => res.data.budget as Budget);

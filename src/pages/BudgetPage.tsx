@@ -1,88 +1,310 @@
-import { ChevronDown, Pencil, Trash2, Plus, X } from "lucide-react";
-
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getTransactions } from "../api/transactionApi";
+import { getBudget, deleteBudget, updateBudget } from "../api/budgetApi";
+import { useBudgetProgress } from "../hooks/useBudgetProgress";
+import BudgetCard from "../components/budget/BudgetCard";
+import BudgetForm from "../components/forms/BudgetForm";
+import TotalLimitForm from "../components/forms/totalLimitForm";
 
 const BudgetPage = () => {
+  const queryClient = useQueryClient();
+
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+  const [editCategory, setEditCategory] = useState<string | null>(null);
+
+  const startDate = new Date(selectedYear, selectedMonth - 1, 1)
+    .toISOString()
+    .split("T")[0];
+
+  const endDate = new Date(selectedYear, selectedMonth, 0)
+    .toISOString()
+    .split("T")[0];
+
+  const { data: budget, isLoading: budgetLoading } = useQuery({
+    queryKey: ["budget", selectedMonth, selectedYear],
+    queryFn: () => getBudget(selectedMonth, selectedYear),
+    retry: false,
+  });
+
+  const { data: transactions, isLoading: transactionsLoading } = useQuery({
+    queryKey: ["transactions", selectedMonth, selectedYear],
+    queryFn: () => getTransactions({ startDate, endDate }),
+  });
+
+  const budgetProgress = useBudgetProgress(budget, transactions);
+  const isLoading = budgetLoading || transactionsLoading;
+
+  console.log("budget:", budget);
+  console.log("transactions:", transactions);
+  console.log("budgetProgress:", budgetProgress);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (category: string) => {
+      const updatedCategories = budget!.categories.filter(
+        (c) => c.category !== category,
+      );
+      if (updatedCategories.length === 0) {
+        return deleteBudget(budget!._id);
+      }
+      return updateBudget(budget!._id, { categories: updatedCategories });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["budget"] });
+      toast.success("Category removed");
+    },
+    onError: () => toast.error("Failed to remove category"),
+  });
+
+  const handlePrevMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear((y) => y - 1);
+    } else {
+      setSelectedMonth((m) => m - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear((y) => y + 1);
+    } else {
+      setSelectedMonth((m) => m + 1);
+    }
+  };
+
+  const handleOpenAdd = () => {
+    setEditCategory(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (category: string) => {
+    setEditCategory(category);
+    setIsModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setEditCategory(null);
+  };
+
+  const monthName = new Date(
+    selectedYear,
+    selectedMonth - 1,
+  ).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  if (isLoading) return <p className="p-6">Loading...</p>;
+
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Budget</h1>
-        <div className="flex gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-[#0892a5] text-white rounded-lg hover:bg-[#0892a5]/90 transition-colors cursor-pointer">
-            <Pencil size={14} />
-            Edit
-          </button>
-          <button type="button" className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
-      </div>
-
-      {/* Month / Year selectors */}
-      <div className="flex gap-3 mb-6">
-        <div className="relative">
-          <select className="px-4 py-2 pr-8 text-sm font-medium bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0892a5]/50 appearance-none">
-            {MONTHS.map((m, i) => (
-              <option key={i + 1} value={i + 1}>{m}</option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-        </div>
-        <div className="relative">
-          <select className="px-4 py-2 pr-8 text-sm font-medium bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0892a5]/50 appearance-none">
-            <option>2025</option>
-            <option>2026</option>
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-        </div>
-      </div>
-
-      {/* Budget content */}
-      <div className="space-y-4">
-        {/* Total progress card */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-medium text-gray-700">Total Budget</span>
-            <span className="text-sm text-gray-500">$0.00 / $0.00</span>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Budgets</h1>
+        <div className="flex items-center gap-3">
+          {/* Month navigator */}
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2">
+            <button
+              onClick={handlePrevMonth}
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <span className="text-sm font-medium text-gray-700 min-w-25 text-center">
+              {monthName}
+            </span>
+            <button
+              onClick={handleNextMonth}
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              <ChevronRight size={16} />
+            </button>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-3">
-            <div
-              className="h-3 rounded-full transition-all duration-300 bg-[#0892a5]"
-              style={{ width: "0%" }}
-            />
-          </div>
-          <p className="text-xs text-gray-400 mt-1 text-right">$0.00 remaining</p>
+
+          {/* Two separate buttons */}
+          <button
+            onClick={() => setIsLimitModalOpen(true)}
+            className="py-2 px-4 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200 transition-colors cursor-pointer"
+          >
+            ✎ Set monthly limit
+          </button>
+          <button
+            onClick={handleOpenAdd}
+            className="py-2 px-4 bg-[#0892a5] hover:bg-[#0a7a8c] text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+          >
+            + Add category
+          </button>
         </div>
-
-        {/* Category cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" />
       </div>
 
-      {/* No budget */}
-      <div className="bg-white rounded-lg p-8 shadow text-center">
-        <p className="text-gray-500 mb-1">No budget</p>
-        <p className="text-sm text-gray-400 mb-4">Set a budget to track your spending</p>
-        <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#0892a5] text-white text-sm font-medium rounded-lg hover:bg-[#0892a5]/90 transition-colors cursor-pointer">
-          <Plus size={16} />
-          Create Budget
-        </button>
-      </div>
-
-      {/* Modal */}
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg max-w-sm w-full mx-4 max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-end p-3 pb-0">
-            <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
-              <X size={20} />
+      {/* Empty state */}
+      {!budget && (
+        <div className="bg-white rounded-lg border border-dashed border-gray-300 p-12 text-center">
+          <p className="text-gray-500 font-medium mb-1">
+            No budget set for {monthName}
+          </p>
+          <p className="text-sm text-gray-400 mb-4">
+            Start by setting a monthly limit or adding a category budget
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => setIsLimitModalOpen(true)}
+              className="py-2 px-4 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200 transition-colors cursor-pointer"
+            >
+              ✎ Set monthly limit
+            </button>
+            <button
+              onClick={handleOpenAdd}
+              className="py-2 px-4 bg-[#0892a5] hover:bg-[#0a7a8c] text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
+            >
+              + Add category
             </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Budget exists */}
+      {budget && (
+        <div>
+          {/* Total limit banner */}
+          {budget.totalLimit &&
+            (() => {
+              const totalSpent = budgetProgress.reduce(
+                (sum, p) => sum + p.spent,
+                0,
+              );
+              const remaining = budget.totalLimit! - totalSpent;
+              const percentRaw = (totalSpent / budget.totalLimit!) * 100;
+              const percentClamped = Math.min(percentRaw, 100);
+
+              return (
+                <div className="bg-white rounded-lg border border-gray-100 p-5 shadow-sm mb-6">
+                  <div className="grid grid-cols-3 gap-4 items-center">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Total budget limit
+                      </p>
+                      <p className="text-2xl font-semibold text-gray-800">
+                        ${budget.totalLimit!.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        month of {monthName}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Total spent so far
+                      </p>
+                      <p
+                        className={`text-2xl font-semibold ${
+                          percentRaw >= 100
+                            ? "text-[#A32D2D]"
+                            : percentRaw >= 80
+                              ? "text-[#BA7517]"
+                              : "text-gray-800"
+                        }`}
+                      >
+                        ${totalSpent.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {remaining >= 0
+                          ? `$${remaining.toFixed(2)} remaining`
+                          : `over by $${Math.abs(remaining).toFixed(2)}`}
+                      </p>
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <p className="text-xs text-gray-500">
+                          Overall progress
+                        </p>
+                        <p
+                          className={`text-xs font-semibold ${
+                            percentRaw >= 100
+                              ? "text-[#A32D2D]"
+                              : percentRaw >= 80
+                                ? "text-[#BA7517]"
+                                : "text-[#0892a5]"
+                          }`}
+                        >
+                          {percentRaw.toFixed(0)}%
+                        </p>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                        <div
+                          className={`h-2 rounded-full transition-all duration-500 ${
+                            percentRaw >= 100
+                              ? "bg-[#E24B4A]"
+                              : percentRaw >= 80
+                                ? "bg-[#EF9F27]"
+                                : "bg-[#0892a5]"
+                          }`}
+                          style={{ width: `${percentClamped}%` }}
+                        />
+                      </div>
+                      <button
+                        onClick={() => setIsLimitModalOpen(true)}
+                        className="text-xs text-[#0892a5] mt-1 cursor-pointer hover:underline"
+                      >
+                        ✎ edit monthly limit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+          {/* Category cards grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {budgetProgress.map((progress) => (
+              <BudgetCard
+                key={progress.categoryId}
+                progress={progress}
+                onEdit={handleOpenEdit}
+                onDelete={(category) => deleteMutation.mutate(category)}
+              />
+            ))}
+
+            {/* Add category card */}
+            <div
+              onClick={handleOpenAdd}
+              className="bg-white rounded-lg border border-dashed border-gray-300 p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#0892a5] hover:bg-gray-50 transition-colors min-h-40"
+            >
+              <span className="text-2xl text-gray-300">+</span>
+              <span className="text-sm text-gray-400">Add category budget</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BudgetForm modal */}
+      {isModalOpen && (
+        <BudgetForm
+          budget={budget ?? null}
+          editCategory={editCategory}
+          month={selectedMonth}
+          year={selectedYear}
+          onClose={handleClose}
+        />
+      )}
+
+      {/* TotalLimitForm modal */}
+      {isLimitModalOpen && (
+        <TotalLimitForm
+          budget={budget ?? null}
+          month={selectedMonth}
+          year={selectedYear}
+          onClose={() => setIsLimitModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
