@@ -27,12 +27,14 @@ const BudgetPage = () => {
     .toISOString()
     .split("T")[0];
 
+  /* fetch budget data*/
   const { data: budget, isLoading: budgetLoading } = useQuery({
     queryKey: ["budget", selectedMonth, selectedYear],
     queryFn: () => getBudget(selectedMonth, selectedYear),
     retry: false,
   });
 
+  /* fetch transactions data */
   const { data: transactions, isLoading: transactionsLoading } = useQuery({
     queryKey: ["transactions", selectedMonth, selectedYear],
     queryFn: () => getTransactions({ startDate, endDate }),
@@ -272,15 +274,6 @@ const BudgetPage = () => {
                 onDelete={(category) => deleteMutation.mutate(category)}
               />
             ))}
-
-            {/* Add category card */}
-            <div
-              onClick={handleOpenAdd}
-              className="bg-white rounded-lg border border-dashed border-gray-300 p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#0892a5] hover:bg-gray-50 transition-colors min-h-40"
-            >
-              <span className="text-2xl text-gray-300">+</span>
-              <span className="text-sm text-gray-400">Add category budget</span>
-            </div>
           </div>
         </div>
       )}
