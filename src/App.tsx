@@ -6,6 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import BudgetPage from "./pages/BudgetPage";
+import ExportPage from "./pages/ExportPage";
 import Layout from "./components/layout/Layout";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/budgets" element={<BudgetPage />} />
+          <Route path="/export" element={<ExportPage />} />
         </Route>
       </Route>
 

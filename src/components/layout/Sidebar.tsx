@@ -1,4 +1,4 @@
-import { Home, Receipt, BarChart3, Settings, X, Wallet } from "lucide-react";
+import { Home, Receipt, BarChart3, Settings, X, Wallet, FileDown } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
@@ -15,6 +15,7 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
     { name: "Transactions", icon: Receipt, path: "/transactions" },
     { name: "Budgets", icon: Wallet, path: "/budgets" },
     { name: "Analytics", icon: BarChart3, path: "/analytics" },
+    { name: "Export", icon: FileDown, path: "/export" },
     { name: "Settings", icon: Settings, path: "/settings" },
   ];
 
