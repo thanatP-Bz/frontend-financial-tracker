@@ -77,7 +77,7 @@ export const useExport = () => {
     if (budget && budget.categories.length > 0) {
       const budgetRows = budget.categories.map((cat) => {
         const spent = filtered
-          .filter((t) => t.category === cat.name && t.type === "expense")
+          .filter((t) => t.category === cat.category && t.type === "expense")
           .reduce((sum, t) => sum + t.amount, 0);
 
         const remaining = cat.limit - spent;
@@ -89,7 +89,7 @@ export const useExport = () => {
               : "OK";
 
         return [
-          cat.name,
+          cat.category,
           `$${cat.limit.toFixed(2)}`,
           `$${spent.toFixed(2)}`,
           `$${remaining.toFixed(2)}`,

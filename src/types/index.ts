@@ -52,7 +52,6 @@ export interface TransactionFilters {
 
 export interface BudgetCategory {
   _id?: string;
-  name: string;
   category: TransactionCategory;
   limit: number;
 }

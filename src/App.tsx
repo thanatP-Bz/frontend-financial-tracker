@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import BudgetPage from "./pages/BudgetPage";
 import ExportPage from "./pages/ExportPage";
@@ -33,6 +34,7 @@ function App() {
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/budgets" element={<BudgetPage />} />
           <Route path="/export" element={<ExportPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
         </Route>
       </Route>
 
